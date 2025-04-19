@@ -7,7 +7,7 @@
 **Transform your writing with AI-powered enhancements using a simple keyboard shortcut**  
 *Compatible with Chrome, Arc, Brave, and all Chromium-based browsers*
 
-[Features](#features) • [Installation](#installation) • [Setup](#setup) • [Usage](#usage) • [FAQ](#faq) • [Contributing](#contributing)
+[Features](#-features) • [Installation](#-installation) • [Setup](#-setup) • [Usage](#-usage) • [FAQ](#-faq) • [Contributing](#-contributing)
 
 </div>
 
@@ -137,8 +137,6 @@ Get-Process | Where-Object {$_.ProcessName -like "*ollama*"} | Stop-Process -For
 set OLLAMA_ORIGINS=chrome-extension://* && ollama serve
 ```
 </details>
-
-
 
 ## 🤝 Contributing
 
