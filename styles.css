@@ -1,0 +1,205 @@
+.text-enhancer-extension {
+  --te-primary-color: #4285f4;
+  --te-bg-color: #ffffff;
+  --te-text-color: #333333;
+  --te-border-color: #dddddd;
+  --te-hover-color: #f5f5f5;
+  --te-shadow-color: rgba(0, 0, 0, 0.1);
+  
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.text-enhancer-extension *,
+.text-enhancer-popup * {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* Popup container */
+.text-enhancer-extension .container {
+  width: 350px;
+  padding: 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--te-bg-color);
+}
+
+.text-enhancer-extension h1 {
+  font-size: 25px;
+  margin-bottom: 16px;
+  color: var(--te-primary-color);
+  text-align: center;
+}
+
+.text-enhancer-extension h2 {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.text-enhancer-extension .logo {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.text-enhancer-extension .logo img {
+  width: 48px;
+  height: 48px;
+}
+
+.text-enhancer-extension .form-group {
+  margin-bottom: 12px;
+}
+
+.text-enhancer-extension label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.text-enhancer-extension input,
+.text-enhancer-extension select,
+.text-enhancer-extension textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--te-border-color);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.text-enhancer-extension textarea {
+  min-height: 80px;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.text-enhancer-extension .button-group {
+  margin: 16px 0;
+  text-align: center;
+}
+
+.text-enhancer-extension button {
+  background-color: var(--te-primary-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.text-enhancer-extension button:hover {
+  opacity: 0.9;
+}
+
+.text-enhancer-extension .instructions {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--te-border-color);
+}
+
+.text-enhancer-extension .instructions p {
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #666;
+}
+
+.text-enhancer-extension .message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 8px;
+  border-radius: 4px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* Text enhancer popup (injected into pages) */
+.text-enhancer-popup {
+  position: fixed;
+  z-index: 9999;
+  width: 100%;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  display: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-bottom: 1px solid #333;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.text-enhancer-popup .text-enhancer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #aaa;
+}
+
+.text-enhancer-popup .text-enhancer-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #999;
+  padding: 0;
+}
+
+.text-enhancer-popup .text-enhancer-close:hover {
+  color: #ccc;
+}
+
+.text-enhancer-popup .text-enhancer-body {
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.text-enhancer-popup .text-enhancer-input {
+  flex-grow: 1;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border: none;
+  font-size: 14px;
+  padding: 8px 0;
+  outline: none;
+}
+
+.text-enhancer-popup .text-enhancer-input::placeholder {
+  color: #888;
+}
+
+.text-enhancer-popup .text-enhancer-actions {
+  display: flex;
+  align-items: center;
+  margin-left: 16px;
+}
+
+.text-enhancer-popup .text-enhancer-submit {
+  display: none; /* Hide submit button to match the design */
+}
+
+.text-enhancer-popup .text-enhancer-loader {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #333;
+  border-top: 2px solid #e0e0e0;
+  border-radius: 50%;
+  animation: text-enhancer-spin 1s linear infinite;
+  display: none;
+}
+
+.text-enhancer-popup .text-enhancer-keyboard-hint {
+  font-size: 12px;
+  color: #888;
+  text-align: right;
+  padding-right: 16px;
+  padding-bottom: 8px;
+}
+
+@keyframes text-enhancer-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
