@@ -239,17 +239,24 @@ async function enhanceText() {
   }
 }
 
-// Replace text in the active element
+// Modified replaceText function with improved Twitter handling
 function replaceText(newText) {
-  // console.log('Replacing text in the active element');
   if (!activeElement) return;
   
   const tagName = activeElement.tagName.toLowerCase();
   const contentEditable = activeElement.getAttribute('contenteditable');
+  const isTwitter = window.location.hostname.includes('x.com') || 
+                    window.location.hostname.includes('twitter.com');
   
-  if (contentEditable === 'true' || contentEditable === '') {
+  if (isTwitter) {
+    // Use modern approach for Twitter/X.com
+    insertTextIntoTwitterEditor(newText);
+  } else if (contentEditable === 'true' || contentEditable === '') {
+    // Normal handling for contentEditable elements
     activeElement.innerText = newText;
+    activeElement.dispatchEvent(new Event('input', { bubbles: true }));
   } else if (tagName === 'input' || tagName === 'textarea') {
+    // Normal handling for input and textarea elements
     const start = activeElement.selectionStart;
     const end = activeElement.selectionEnd;
     const oldValue = activeElement.value;
@@ -265,6 +272,112 @@ function replaceText(newText) {
     
     // Trigger input event to notify the page about the change
     activeElement.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+}
+
+// Modern function to insert text into Twitter's Draft.js editor
+function insertTextIntoTwitterEditor(text) {
+  try {
+    // Focus the editor
+    activeElement.focus();
+    
+    // Clear any existing text by simulating select all + delete
+    // Create a Selection and Range
+    const selection = window.getSelection();
+    const range = document.createRange();
+    
+    // Select all content
+    range.selectNodeContents(activeElement);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    
+    // Simulate delete key
+    const keyEvent = new KeyboardEvent('keydown', {
+      key: 'Delete',
+      code: 'Delete',
+      keyCode: 46,
+      which: 46,
+      bubbles: true,
+      cancelable: true
+    });
+    activeElement.dispatchEvent(keyEvent);
+    
+    // Wait briefly for the delete operation to complete
+    setTimeout(() => {
+      // Now insert our text using a clipboard paste event
+      insertViaClipboardEvent(text);
+    }, 50);
+  } catch (error) {
+    console.error('Error in insertTextIntoTwitterEditor:', error);
+    // Try direct insertion as fallback
+    insertTextDirectly(text);
+  }
+}
+
+// Insert text via ClipboardEvent
+function insertViaClipboardEvent(text) {
+  try {
+    // Create a new ClipboardEvent
+    const pasteEvent = new ClipboardEvent('paste', {
+      bubbles: true,
+      cancelable: true,
+      clipboardData: new DataTransfer()
+    });
+    
+    // Set the clipboard data
+    pasteEvent.clipboardData.setData('text/plain', text);
+    
+    // Dispatch the paste event
+    activeElement.dispatchEvent(pasteEvent);
+    
+    // Fire input event to ensure Twitter's React components update
+    activeElement.dispatchEvent(new Event('input', { bubbles: true }));
+    
+    // If it doesn't work, try direct insertion
+    setTimeout(() => {
+      if (!activeElement.textContent.includes(text)) {
+        insertTextDirectly(text);
+      }
+    }, 100);
+  } catch (error) {
+    console.error('Error in insertViaClipboardEvent:', error);
+    insertTextDirectly(text);
+  }
+}
+
+// Direct text insertion method as a final fallback
+function insertTextDirectly(text) {
+  try {
+    // For Draft.js editors, we can try setting textContent
+    // followed by forcing React to update
+    
+    // Clear existing content
+    while (activeElement.firstChild) {
+      activeElement.removeChild(activeElement.firstChild);
+    }
+    
+    // Create and insert a text node
+    const textNode = document.createTextNode(text);
+    activeElement.appendChild(textNode);
+    
+    // Dispatch multiple events that Draft.js/React might be listening for
+    const events = [
+      new Event('input', { bubbles: true, cancelable: true }),
+      new Event('change', { bubbles: true, cancelable: true }),
+      new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: ' ', keyCode: 32 }),
+      new KeyboardEvent('keyup', { bubbles: true, cancelable: true, key: ' ', keyCode: 32 })
+    ];
+    
+    events.forEach(event => activeElement.dispatchEvent(event));
+    
+    // Create and dispatch a blur and focus event to force React to update
+    activeElement.dispatchEvent(new Event('blur', { bubbles: true }));
+    setTimeout(() => {
+      activeElement.focus();
+      activeElement.dispatchEvent(new Event('focus', { bubbles: true }));
+    }, 10);
+  } catch (error) {
+    console.error('Error in insertTextDirectly:', error);
   }
 }
 
