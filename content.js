@@ -452,7 +452,6 @@ async function callAnthropic(text, instruction) {
   return data.content[0].text.trim();
 }
 
-// ollama:custom
 // Call Ollama API with custom model
 async function callOllamaCustom(text, instruction, customModel) {
   try {
