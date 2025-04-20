@@ -68,20 +68,10 @@ For local AI processing with Ollama:
 1. Install [Ollama](https://ollama.com/) on your computer
 2. For best results, use smaller models (1B-3B parameters) for faster response times
 3. Start Ollama with CORS enabled for the extension:
+4. Set environment variable `OLLAMA_ORIGINS=chrome-extension://*`
+*You may need to kill all Ollama processes and then serve again; otherwise, you’ll get an Ollama 403 error.*
 
-   **Windows (PowerShell)**:
-   ```powershell
-   Get-Process | Where-Object {$_.ProcessName -like "*ollama*"} | Stop-Process -Force
-   set OLLAMA_ORIGINS=chrome-extension://* && ollama serve
-   ```
-
-   **macOS/Linux**:
-   ```bash
-   killall ollama
-   OLLAMA_ORIGINS=chrome-extension://* ollama serve
-   ```
-
-4. For `"Unhinged Mode"`, install the uncensored model:
+6. For `"Unhinged Mode"`, install the uncensored model:
    ```bash
    ollama pull dolphin-phi:2.7b
    ```
