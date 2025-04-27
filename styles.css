@@ -5,9 +5,9 @@
   --te-border-color: #dddddd;
   --te-hover-color: #f5f5f5;
   --te-shadow-color: rgba(0, 0, 0, 0.1);
-  
+
   box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .text-enhancer-extension *,
@@ -20,7 +20,7 @@
 .text-enhancer-extension .container {
   width: 350px;
   padding: 16px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--te-bg-color);
 }
 
@@ -125,7 +125,7 @@
   left: 0;
   right: 0;
   border-bottom: 1px solid #333;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .text-enhancer-popup .text-enhancer-header {
@@ -200,6 +200,10 @@
 }
 
 @keyframes text-enhancer-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

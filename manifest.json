@@ -3,14 +3,8 @@
   "name": "Text Enhancer",
   "version": "1.0",
   "description": "Enhance your text using AI with a simple keyboard shortcut",
-  "permissions": [
-    "storage",
-    "activeTab",
-    "scripting"
-  ],
-  "host_permissions": [
-    "http://localhost:*/"
-  ],
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["http://localhost:*/"],
   "background": {
     "service_worker": "background.js"
   },

@@ -5,7 +5,7 @@
 ![Text Enhancer Logo](./icons/logo.svg)
 
 **Transform your writing with AI-powered enhancements using a simple keyboard shortcut**  
-*Compatible with Chrome, Arc, Brave, and all Chromium-based browsers*
+_Compatible with Chrome, Arc, Brave, and all Chromium-based browsers_
 
 [Features](#-features) • [Installation](#-installation) • [Setup](#-setup) • [Usage](#-usage) • [FAQ](#-faq) • [Contributing](#-contributing)
 
@@ -33,11 +33,13 @@ Text Enhancer is a lightweight browser extension that helps you improve your wri
 ### Option 1: Install from Source (Developer Mode)
 
 1. Clone the repository
+
    ```bash
    git clone https://github.com/DebBidhi/text-enhancer.git
    ```
 
 2. Open your browser's extension page:
+
    - Chrome/Brave/Edge: Go to `chrome://extensions/`
    - Arc: Go to `arc://extensions/`
 
@@ -49,7 +51,7 @@ Text Enhancer is a lightweight browser extension that helps you improve your wri
 
 ### Option 2: Chrome Web Store
 
-*Coming soon*
+_Coming soon_
 
 ## ⚙️ Setup
 
@@ -70,12 +72,14 @@ For local AI processing with Ollama:
 3. Start Ollama with CORS enabled for the extension:
 
    **Windows (PowerShell)**:
+
    ```powershell
    Get-Process | Where-Object {$_.ProcessName -like "*ollama*"} | Stop-Process -Force
    set OLLAMA_ORIGINS=chrome-extension://* && ollama serve
    ```
 
    **macOS/Linux**:
+
    ```bash
    killall ollama
    OLLAMA_ORIGINS=chrome-extension://* ollama serve
@@ -97,14 +101,14 @@ For local AI processing with Ollama:
 
 ### Example Instructions
 
-| Instruction | Result |
-|-------------|--------|
-| "Fix grammar and spelling" | Corrects errors while preserving content |
-| "Make this more concise" | Shortens text while maintaining key points |
-| "Sound more professional" | Adopts formal tone and business terminology |
-| "Add more enthusiasm" | Increases energy and positive language |
-| "Write like Shakespeare" | Transforms text with Elizabethan style |
-| "Make it a insult" | Perfect for "Unhinged Mode" - unpredictable and creative results! |
+| Instruction                | Result                                                            |
+| -------------------------- | ----------------------------------------------------------------- |
+| "Fix grammar and spelling" | Corrects errors while preserving content                          |
+| "Make this more concise"   | Shortens text while maintaining key points                        |
+| "Sound more professional"  | Adopts formal tone and business terminology                       |
+| "Add more enthusiasm"      | Increases energy and positive language                            |
+| "Write like Shakespeare"   | Transforms text with Elizabethan style                            |
+| "Make it a insult"         | Perfect for "Unhinged Mode" - unpredictable and creative results! |
 
 ## 🔒 Privacy & Security
 
@@ -136,6 +140,7 @@ Make sure you've correctly configured Ollama with CORS headers for the extension
 Get-Process | Where-Object {$_.ProcessName -like "*ollama*"} | Stop-Process -Force
 set OLLAMA_ORIGINS=chrome-extension://* && ollama serve
 ```
+
 </details>
 
 ## 🤝 Contributing

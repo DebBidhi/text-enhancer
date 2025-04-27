@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Text Enhancer Browser Extension</title>
+    <link
+      href='data:image/svg+xml,&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"&gt;&lt;text y=".9em" font-size="90"&gt;📰&lt;/text&gt;&lt;/svg&gt;'
+      rel="icon"
+      type="image/svg+xml"
+    />
+    <style>
+      :root {
+        --primary-color: #2d3748;
+        --secondary-color: #2d3748;
+        --accent-color: #805ad5;
+        --background-color: #f7fafc;
+        --card-bg-color: #ffffff;
+        --text-color: #1a202c;
+        --light-text: #718096;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      body {
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+        background-color: var(--background-color);
+        color: var(--text-color);
+      }
+
+      header {
+        background-color: var(--card-bg-color);
+        color: var(--text-color);
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      h1 {
+        margin: 0;
+        font-weight: 800;
+        font-size: 2.5rem;
+        letter-spacing: -0.025em;
+      }
+
+      .subtitle {
+        color: var(--light-text);
+        margin-top: 0.75rem;
+        font-weight: 400;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 3rem 1.5rem;
+      }
+
+      .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 450px), 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+
+      .card {
+        background-color: var(--card-bg-color);
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        height: auto;
+        max-height: 600px;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .card-header {
+        padding: 1.5rem 1.5rem 0.75rem;
+        position: relative;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .card-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        color: var(--text-color);
+      }
+
+      .card-header::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 1.5rem;
+        width: 2rem;
+        height: 2px;
+        background-color: var(--accent-color);
+      }
+
+      .card-content {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        max-height: 400px; /* Control the maximum height of content */
+      }
+
+      .card-content p {
+        margin-top: 0;
+        color: var(--secondary-color);
+        line-height: 1.6;
+      }
+
+      .card-content a {
+        color: var(--accent-color);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .card-content a:hover {
+        color: var(--secondary-color);
+        text-decoration: underline;
+      }
+
+      .card-content img {
+        max-width: 100%;
+        height: auto;
+        margin: 1rem 0;
+        border-radius: 0.5rem;
+      }
+
+      .card-footer {
+        padding: 1rem 1.5rem;
+        margin-top: auto;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        background-color: white;
+      }
+
+      .see-more-btn {
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.65rem 1.25rem;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .see-more-btn:hover {
+        background-color: #6b46c1;
+        transform: translateY(-1px);
+      }
+
+      .see-more-btn::after {
+        content: "→";
+        transition: transform 0.2s;
+      }
+
+      .see-more-btn:hover::after {
+        transform: translateX(3px);
+      }
+
+      /* Code block styling */
+      pre {
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        overflow-x: auto;
+        font-family: "SF Mono", "Roboto Mono", Menlo, monospace;
+        font-size: 0.875rem;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      /* Table styling */
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      th,
+      td {
+        padding: 0.75rem;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      /* Full article modal */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(4px);
+        animation: fadeIn 0.2s;
+      }
+
+      .modal-content {
+        background-color: var(--card-bg-color);
+        margin: 5% auto;
+        padding: 0;
+        width: 80%;
+        max-width: 800px;
+        border-radius: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        animation: slideIn 0.3s;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .modal-header {
+        background-color: var(--card-bg-color);
+        color: var(--text-color);
+        padding: 1.5rem;
+        position: relative;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .modal-header h2 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+      }
+
+      .close {
+        color: var(--light-text);
+        position: absolute;
+        top: 1.25rem;
+        right: 1.5rem;
+        font-size: 1.5rem;
+        font-weight: 300;
+        transition: all 0.2s;
+        cursor: pointer;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+
+      .close:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        color: var(--text-color);
+      }
+
+      .modal-body {
+        padding: 2rem;
+        max-height: 70vh;
+        overflow-y: auto;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateY(-30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* Footer */
+      footer {
+        background-color: var(--card-bg-color);
+        color: var(--light-text);
+        text-align: center;
+        padding: 2rem 1rem;
+        margin-top: 3rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      footer p {
+        margin: 0;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .container {
+          padding: 1.5rem 1rem;
+        }
+
+        .card-container {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .modal-content {
+          width: 95%;
+          margin: 5% auto;
+        }
+      }
+
+      /* Dark mode support */
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background-color: #121212;
+          --card-bg-color: #1e1e1e;
+          --text-color: #e0e0e0;
+          --light-text: #a0aec0;
+          --primary-color: #805ad5;
+          --secondary-color: #a0aec0;
+        }
+
+        pre {
+          background-color: #2d3748;
+          border-color: #4a5568;
+        }
+
+        th {
+          background-color: #2d3748;
+        }
+
+        tr:nth-child(even) {
+          background-color: #222222;
+        }
+
+        .card {
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-header,
+        .modal-header {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-footer {
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        footer {
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .close:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Get all modals
+        var modals = document.querySelectorAll(".modal");
+
+        // Get all buttons that open a modal
+        var btns = document.querySelectorAll(".see-more-btn");
+
+        // Get all elements that close the modal
+        var spans = document.querySelectorAll(".close");
+
+        // When the user clicks the button, open the modal
+        btns.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var modalId = this.getAttribute("data-modal");
+            document.getElementById(modalId).style.display = "block";
+            document.body.style.overflow = "hidden";
+          });
+        });
+
+        // When the user clicks on <span> (x), close the modal
+        spans.forEach(function (span) {
+          span.addEventListener("click", closeModals);
+        });
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.addEventListener("click", function (event) {
+          modals.forEach(function (modal) {
+            if (event.target == modal) {
+              closeModals();
+            }
+          });
+        });
+
+        function closeModals() {
+          modals.forEach(function (modal) {
+            modal.style.display = "none";
+          });
+          document.body.style.overflow = "auto";
+        }
+
+        // Close modal with Escape key
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            closeModals();
+          }
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <header><h1>Text Enhancer Browser Extension</h1></header>
+    <div class="modal" id="modal-1">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>✨ Features</h2>
+          <span class="close">×</span>
+        </div>
+        <div class="modal-body">
+          <ul>
+            <li>
+              <strong>Instant Access</strong>: Summon the enhancer with
+              <code>Ctrl+B</code> (Windows/Linux) or <code>Cmd+B</code> (Mac) in
+              any text field
+            </li>
+            <li><strong>Multiple AI Options</strong>:</li>
+            <li>
+              <strong>Ollama</strong> (Free &amp; Local): Enhance text with your
+              locally running AI models
+            </li>
+            <li>
+              <strong>OpenAI</strong>: Access GPT models for precise text
+              refinements
+            </li>
+            <li>
+              <strong>Anthropic</strong>: Leverage Claude models for nuanced
+              writing improvements
+            </li>
+            <li>
+              <strong>Clean, Minimal Interface</strong>: Distraction-free popup
+              inspired by modern code editors
+            </li>
+            <li>
+              <strong>Context-Aware</strong>: Works with selected text or entire
+              input fields
+            </li>
+            <li>
+              <strong>Privacy-First</strong>: All API keys stored locally in
+              your browser
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="modal-3">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>⚙️ Setup</h2>
+          <span class="close">×</span>
+        </div>
+        <div class="modal-body">
+          <ol>
+            <li>Click the Text Enhancer icon in your browser toolbar</li>
+            <li>Choose your preferred AI provider:</li>
+            <li><strong>Ollama</strong> (default): Free local AI</li>
+            <li><strong>OpenAI</strong>: GPT models</li>
+            <li><strong>Anthropic</strong>: Claude models</li>
+            <li>Enter your API key (if required)</li>
+            <li>Click "Save Settings"</li>
+          </ol>
+          <h3>Ollama Configuration</h3>
+          <p>For local AI processing with Ollama:</p>
+          <ol>
+            <li>
+              Install <a href="https://ollama.com/">Ollama</a> on your computer
+            </li>
+            <li>
+              For best results, use smaller models (1B-3B parameters) for faster
+              response times
+            </li>
+            <li>Start Ollama with CORS enabled for the extension:</li>
+          </ol>
+          <p>
+            <strong>Windows (PowerShell)</strong>:
+            <code
+              >powershell Get-Process | Where-Object {$_.ProcessName -like
+              "*ollama*"} | Stop-Process -Force set
+              OLLAMA_ORIGINS=chrome-extension://* &amp;&amp; ollama serve</code
+            >
+          </p>
+          <p>
+            <strong>macOS/Linux</strong>:
+            <code
+              >bash killall ollama OLLAMA_ORIGINS=chrome-extension://* ollama
+              serve</code
+            >
+          </p>
+          <ol>
+            <li>
+              For <code>"Unhinged Mode"</code>, install the uncensored model:
+              <code>bash ollama pull dolphin-phi:2.7b</code>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="modal-4">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>🎯 Usage</h2>
+          <span class="close">×</span>
+        </div>
+        <div class="modal-body">
+          <ol>
+            <li>Focus on any text field on any website</li>
+            <li>
+              Type or paste your text and select the text you want to replace
+            </li>
+            <li>
+              Press <code>Ctrl+B</code> (Windows/Linux) or
+              <code>Cmd+B</code> (Mac)
+            </li>
+            <li>
+              In the popup, enter your instruction (e.g., "fix grammar", "sound
+              more professional")
+            </li>
+            <li>Press Enter or click "Enhance"</li>
+            <li>
+              Your text will be transformed according to your instructions!
+            </li>
+          </ol>
+          <h3>Example Instructions</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Instruction</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>"Fix grammar and spelling"</td>
+                <td>Corrects errors while preserving content</td>
+              </tr>
+              <tr>
+                <td>"Make this more concise"</td>
+                <td>Shortens text while maintaining key points</td>
+              </tr>
+              <tr>
+                <td>"Sound more professional"</td>
+                <td>Adopts formal tone and business terminology</td>
+              </tr>
+              <tr>
+                <td>"Add more enthusiasm"</td>
+                <td>Increases energy and positive language</td>
+              </tr>
+              <tr>
+                <td>"Write like Shakespeare"</td>
+                <td>Transforms text with Elizabethan style</td>
+              </tr>
+              <tr>
+                <td>"Make it a insult"</td>
+                <td>
+                  Perfect for "Unhinged Mode" - unpredictable and creative
+                  results!
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="modal-6">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>❓ FAQ</h2>
+          <span class="close">×</span>
+        </div>
+        <div class="modal-body">
+          <details>
+            <summary>
+              <b>Why isn't the popup appearing when I press the shortcut?</b>
+            </summary>
+            Ensure you're focused on an editable text field. Some websites might
+            override the keyboard shortcut with their own functionality. Try
+            clicking inside the text field first.
+          </details>
+          <details>
+            <summary>
+              <b>I'm getting API errors when using OpenAI/Anthropic</b>
+            </summary>
+            Verify your API key is correct and hasn't expired. Also check that
+            you have sufficient credits in your account.
+          </details>
+          <details>
+            <summary><b>Ollama returns a 403 error</b></summary>
+            Make sure you've correctly configured Ollama with CORS headers for
+            the extension:
+
+            <pre><code>Get-Process | Where-Object {$_.ProcessName -like "*ollama*"} | Stop-Process -Force
+set OLLAMA_ORIGINS=chrome-extension://* &amp;&amp; ollama serve
+</code></pre>
+          </details>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="card-container">
+        <div class="card" id="card-0">
+          <div class="card-header"><h2>🚀 Overview</h2></div>
+          <div class="card-content">
+            <p>
+              Text Enhancer is a lightweight browser extension that helps you
+              improve your writing anywhere on the web. Whether you're composing
+              emails, writing social media posts, or commenting on articles,
+              Text Enhancer acts like a "linter for text" - giving you instant
+              AI-powered suggestions to enhance your writing with a simple
+              keyboard shortcut.
+            </p>
+            <p><img alt="Text Enhancer Demo" src="./gif/demo.gif" /></p>
+          </div>
+        </div>
+        <div class="card" id="card-1">
+          <div class="card-header"><h2>✨ Features</h2></div>
+          <div class="card-content">
+            <ul>
+              <li>
+                <strong>Instant Access</strong>: Summon the enhancer with
+                <code>Ctrl+B</code> (Windows/Linux) or <code>Cmd+B</code> (Mac)
+                in any text field
+              </li>
+              <li><strong>Multiple AI Options</strong>:</li>
+              <li>
+                <strong>Ollama</strong> (Free &amp; Local): Enhance text with
+                your locally running AI models
+              </li>
+              <li>
+                <strong>OpenAI</strong>: Access GPT models for precise text
+                refinements
+              </li>
+              <li>
+                <strong>Anthropic</strong>: Leverage Claude models for nuanced
+                writing improvements
+              </li>
+              <li>
+                <strong>Clean, Minimal Interface</strong>: Distraction-free
+                popup inspired by modern code editors
+              </li>
+              <li>
+                <strong>Context-Aware</strong>: Works with selected text or
+                entire input fields
+              </li>
+              <li>
+                <strong>Privacy-First</strong>: All API keys stored locally...
+              </li>
+            </ul>
+          </div>
+          <div class="card-footer">
+            <button class="see-more-btn" data-modal="modal-1">
+              Read Full Article
+            </button>
+          </div>
+        </div>
+        <div class="card" id="card-2">
+          <div class="card-header"><h2>📦 Installation</h2></div>
+          <div class="card-content">
+            <h3>Option 1: Install from Source (Developer Mode)</h3>
+            <ol>
+              <li>
+                <p>
+                  Clone the repository
+                  <code
+                    >bash git clone
+                    https://github.com/DebBidhi/text-enhancer.git</code
+                  >
+                </p>
+              </li>
+              <li>
+                <p>Open your browser's extension page:</p>
+              </li>
+              <li>
+                Chrome/Brave/Edge: Go to <code>chrome://extensions/</code>
+              </li>
+              <li>
+                <p>Arc: Go to <code>arc://extensions/</code></p>
+              </li>
+              <li>
+                <p>Enable "Developer mode" (toggle in top-right corner)</p>
+              </li>
+              <li>
+                <p>
+                  Click "Load unpacked" and select the
+                  <code>text-enhancer</code> folder
+                </p>
+              </li>
+              <li>
+                <p>
+                  The extension icon should now appear in your browser toolbar
+                </p>
+              </li>
+            </ol>
+            <h3>Option 2: Chrome Web Store</h3>
+            <p><em>Coming soon</em></p>
+          </div>
+        </div>
+        <div class="card" id="card-3">
+          <div class="card-header"><h2>⚙️ Setup</h2></div>
+          <div class="card-content">
+            <ol>
+              <li>Click the Text Enhancer icon in your browser toolbar</li>
+              <li>Choose your preferred AI provider:</li>
+              <li><strong>Ollama</strong> (default): Free local AI</li>
+              <li><strong>OpenAI</strong>: GPT models</li>
+              <li><strong>Anthropic</strong>: Claude models</li>
+              <li>Enter your API key (if required)</li>
+              <li>Click "Save Settings"</li>
+            </ol>
+            <h3>Ollama Configuration</h3>
+            <p>For local AI processing with Ollama:</p>
+            <ol>
+              <li>
+                Install <a href="https://ollama.com/">Ollama</a> on your
+                computer
+              </li>
+              <li>
+                For best results, use smaller models (1B-3B parameters) for
+                faster response times
+              </li>
+              <li>Start Ollama with CORS enabled for the extension:</li>
+            </ol>
+            <p>
+              <strong>Windows (PowerShell)</strong>:
+              <code>powershell Get-Process |...</code>
+            </p>
+          </div>
+          <div class="card-footer">
+            <button class="see-more-btn" data-modal="modal-3">
+              Read Full Article
+            </button>
+          </div>
+        </div>
+        <div class="card" id="card-4">
+          <div class="card-header"><h2>🎯 Usage</h2></div>
+          <div class="card-content">
+            <ol>
+              <li>Focus on any text field on any website</li>
+              <li>
+                Type or paste your text and select the text you want to replace
+              </li>
+              <li>
+                Press <code>Ctrl+B</code> (Windows/Linux) or
+                <code>Cmd+B</code> (Mac)
+              </li>
+              <li>
+                In the popup, enter your instruction (e.g., "fix grammar",
+                "sound more professional")
+              </li>
+              <li>Press Enter or click "Enhance"</li>
+              <li>
+                Your text will be transformed according to your instructions!
+              </li>
+            </ol>
+            <h3>Example Instructions</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Instruction</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>"Fix grammar and spelling"</td>
+                  <td>Corrects errors while preserving content</td>
+                </tr>
+                <tr>
+                  <td>"Make this more concise"</td>
+                  <td>Shortens text while maintaining...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer">
+            <button class="see-more-btn" data-modal="modal-4">
+              Read Full Article
+            </button>
+          </div>
+        </div>
+        <div class="card" id="card-5">
+          <div class="card-header"><h2>🔒 Privacy &amp; Security</h2></div>
+          <div class="card-content">
+            <ul>
+              <li>
+                <strong>Local Storage</strong>: All API keys stored securely in
+                your browser
+              </li>
+              <li>
+                <strong>Direct Communication</strong>: Text sent directly from
+                your browser to the selected AI provider
+              </li>
+              <li>
+                <strong>No Data Collection</strong>: The extension does not
+                collect or store your writing
+              </li>
+              <li><strong>Minimal Permissions</strong>:</li>
+              <li>
+                <code>activeTab</code>: To access the current page's content
+              </li>
+              <li><code>storage</code>: To save your preferences</li>
+              <li><code>&lt;all_urls&gt;</code>: To function on any website</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card" id="card-6">
+          <div class="card-header"><h2>❓ FAQ</h2></div>
+          <div class="card-content">
+            <details>
+              <summary>
+                <b>Why isn't the popup appearing when I press the shortcut?</b>
+              </summary>
+              Ensure you're focused on an editable text field. Some websites
+              might override the keyboard shortcut with their own functionality.
+              Try clicking inside the text field first.
+            </details>
+            <details>
+              <summary>
+                <b>I'm getting API errors when using OpenAI/Anthropic</b>
+              </summary>
+              Verify your API key is correct and hasn't expired. Also check that
+              you have sufficient credits in your account.
+            </details>
+            <details>
+              <summary><b>Ollama returns a 403 error</b></summary>
+              Make sure you've correctly configured Ollama with CORS headers for
+              the...
+            </details>
+          </div>
+          <div class="card-footer">
+            <button class="see-more-btn" data-modal="modal-6">
+              Read Full Article
+            </button>
+          </div>
+        </div>
+        <div class="card" id="card-7">
+          <div class="card-header"><h2>🤝 Contributing</h2></div>
+          <div class="card-content">
+            <p>
+              Contributions are welcome and appreciated! Here's how you can
+              help:
+            </p>
+            <ul>
+              <li><strong>Report bugs</strong> by opening an issue</li>
+              <li>
+                <strong>Suggest features</strong> that would make the extension
+                more useful
+              </li>
+              <li>
+                <strong>Submit pull requests</strong> to improve the codebase
+              </li>
+              <li>
+                <strong>Create documentation</strong> to help new users get
+                started
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card" id="card-8">
+          <div class="card-header"><h2>📄 License</h2></div>
+          <div class="card-content">
+            <p>
+              MIT License - See <a href="LICENSE">LICENSE</a> file for details
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer><p>Generated on April 26, 2025</p></footer>
+  </body>
+</html>
